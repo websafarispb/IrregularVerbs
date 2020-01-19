@@ -121,23 +121,28 @@ public class Training_Verbs {
         }
     }
     public void check_Verb(){
-        System.out.println(answer.getText() + " _ " + list_Irr_verb.get(num).getValue());
-        String answerStr = answer.getText();
-        String []checkStr = list_Irr_verb.get(num).getValue().split(";");
-        boolean check = false;
-        for(int i = 0; i < checkStr.length; i++){
-            if(checkStr[i].trim().equals(answerStr)){
-                list_Irr_verb.get(num).IncKnowlage();
-                answerLabel.setText("Yes " + list_Irr_verb.get(num).getValue() + "  " +  list_verb.get(num_verbs).getKnowlage()+" %");
-                check = true;
+        if(answer.getText().length()>2) {
+            System.out.println(answer.getText().length());
+            System.out.println(answer.getText() + " _ " + list_Irr_verb.get(num).getValue());
+            String answerStr = answer.getText();
+            String[] checkStr = list_Irr_verb.get(num).getValue().split(";");
+            boolean check = false;
+            for (int i = 0; i < checkStr.length; i++) {
+                if (checkStr[i].trim().equals(answerStr)) {
+                    list_Irr_verb.get(num).IncKnowlage();
+                    answerLabel.setText("Yes " + list_Irr_verb.get(num).getValue() + "  " + list_verb.get(num_verbs).getKnowlage() + " %");
+                    check = true;
+                }
+            }
+
+
+            if (!check) {
+                list_Irr_verb.get(num).DecKnowlage();
+                answerLabel.setText("No " + list_Irr_verb.get(num).getValue() + "  " + list_verb.get(num_verbs).getKnowlage() + " %");
             }
         }
-
-
-        if(!check) {
-            list_Irr_verb.get(num).DecKnowlage();
-            answerLabel.setText("No " + list_Irr_verb.get(num).getValue() + "  " + list_verb.get(num_verbs).getKnowlage() + " %");
-        }
+        else
+            answerLabel.setText("Пусто");
 
     }
     public void check_Verb2(){

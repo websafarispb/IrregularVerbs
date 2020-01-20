@@ -43,12 +43,13 @@ public class Training_Verbs {
         panel = new JPanel();
         panel.setBorder(BorderFactory.createEmptyBorder(0,50,0,50));
         verbLabel = new JLabel("some verb");
-        answerLabel = new JLabel("");
+        answerLabel = new JLabel("Введите ответ!!!");
         answer = new JTextField(20);
         checkAnswer = new JButton("Check answer");
         checkAnswer.addActionListener(new CheckButton());
         nextVerb = new JButton("Next Verb");
         nextVerb.addActionListener(new NextButton());
+        nextVerb.setEnabled(false);
         panel.add(verbLabel);
         panel.add(answer);
         panel.add(answerLabel);
@@ -121,8 +122,9 @@ public class Training_Verbs {
         }
     }
     public void check_Verb(){
-        if(answer.getText().length()>2) {
-            System.out.println(answer.getText().length());
+
+        if(answer.getText().length() > 1) {
+            checkAnswer.setEnabled(false);
             System.out.println(answer.getText() + " _ " + list_Irr_verb.get(num).getValue());
             String answerStr = answer.getText();
             String[] checkStr = list_Irr_verb.get(num).getValue().split(";");
@@ -130,7 +132,7 @@ public class Training_Verbs {
             for (int i = 0; i < checkStr.length; i++) {
                 if (checkStr[i].trim().equals(answerStr)) {
                     list_Irr_verb.get(num).IncKnowlage();
-                    answerLabel.setText("Yes " + list_Irr_verb.get(num).getValue() + "  " + list_verb.get(num_verbs).getKnowlage() + " %");
+                    answerLabel.setText("Yes " + list_Irr_verb.get(num).getValue() + "  " +  list_Irr_verb.get(num).getKnowlage() + " %");
                     check = true;
                 }
             }
@@ -138,46 +140,29 @@ public class Training_Verbs {
 
             if (!check) {
                 list_Irr_verb.get(num).DecKnowlage();
-                answerLabel.setText("No " + list_Irr_verb.get(num).getValue() + "  " + list_verb.get(num_verbs).getKnowlage() + " %");
+                answerLabel.setText("No " + list_Irr_verb.get(num).getValue() + "  " +  list_Irr_verb.get(num).getKnowlage() + " %");
             }
+            nextVerb.setEnabled(true);
         }
         else
-            answerLabel.setText("Пусто");
-
-    }
-    public void check_Verb2(){
-        System.out.println(answer.getText() + " _ " + list_verb.get(num_verbs).getTime(time));
-        String answerStr = answer.getText();
-        String []checkStr = list_verb.get(num_verbs).getTime(time).split(";");
-        boolean check = false;
-        for(int i = 0; i < checkStr.length; i++){
-            if(checkStr[i].trim().equals(answerStr)){
-                list_verb.get(num_verbs).IncKnowlage();
-                answerLabel.setText("Yes " + list_verb.get(num_verbs).getTime(time) + "  " +  list_verb.get(num_verbs).getKnowlage()+" %");
-                check = true;
-            }
-        }
-
-
-        if(!check) {
-            list_verb.get(num_verbs).DecKnowlage();
-            answerLabel.setText("No " + list_verb.get(num_verbs).getTime(time) + "  " + list_verb.get(num_verbs).getKnowlage() + " %");
-        }
-
+            answerLabel.setText("Введите ответ!!!");
 
     }
     public class NextButton implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
+            checkAnswer.setEnabled(true);
+            nextVerb.setEnabled(false);
             int size = list_Irr_verb.size();
             boolean flag = true;
             while(size!=0&&flag){
-                num = (int)(Math.random()*size);
+                num = nextelement();
+
                 if(list_Irr_verb.get(num).getKnowlage()>=max_knowlage){
                     list_Irr_verb.remove(num);
                 }else{
                     answer.setText("");
-                    answerLabel.setText("");
+                    answerLabel.setText("Введите ответ!!!");
                     verbLabel.setText(list_Irr_verb.get(num).getTranslation() + " " + list_Irr_verb.get(num).getTime());
                     flag = false;
                 }
@@ -191,6 +176,8 @@ public class Training_Verbs {
                                 JOptionPane.QUESTION_MESSAGE, null, options,
                                 options[0]);
                 if(n==0){
+                    answer.setText("");
+                    answerLabel.setText("");
                     for(IrrVerb verb : list_verb){
                         verb.getV1().setKnowlage(0);
                         verb.getV2().setKnowlage(0);
@@ -198,71 +185,24 @@ public class Training_Verbs {
                     }
                     setList_verb( list_verb);
                 }
+                else
+                    checkAnswer.setEnabled(false);
             }
 
 
         }
-    }
-    public void next_verb(){
-        answer.setText("");
-        answerLabel.setText("");
-        if(num_verbs == list_verb.size()-1&& time == 2){
-            JOptionPane.showConfirmDialog(panel,"You finished");
-            num_verbs = -1;
-            ListSort();
-        }
-        if (time == 2) {
-            time = 0;
-            if (num_verbs < list_verb.size())
-                num_verbs++;
-
-        } else
-            time++;
-        String t;
-        switch (time) {
-            case 0:
-                t = "v1";
-                break;
-            case 1:
-                t = "v2";
-                break;
-            case 2:
-                t = "v3";
-                break;
-            default:
-                t = "error";
-                break;
-        }
-        System.out.println(" TIME - "  + time);
-        System.out.println("NUM_VERBS - " + num_verbs);
-        System.out.println("list_verb.size()" + list_verb.size());
-
-        verbLabel.setText(list_verb.get(num_verbs).getTranslation() + " - " + t);
-
-    }
-    public class ListHelper {
-        private int num_verb;
-        private int time;
-
-        public ListHelper(int num_verb, int time) {
-            this.num_verb = num_verb;
-            this.time = time;
-        }
-
-        public int getNum_verb() {
-            return num_verb;
-        }
-
-        public void setNum_verb(int num_verb) {
-            this.num_verb = num_verb;
-        }
-
-        public int getTime() {
-            return time;
-        }
-
-        public void setTime(int time) {
-            this.time = time;
+        public int nextelement(){
+            int size = list_Irr_verb.size();
+            while(true) {
+                int num = (int) (Math.random() * size);
+                // you have to wtite there !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                if(!num_verb.contains(num)) {
+                    num_verb.add(num);
+                    if(num_verb.size()==size)
+                        num_verb.removeAll(num_verb);
+                    return num;
+                }
+            }
         }
     }
     public class WinLis implements WindowListener {
